@@ -9,8 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v4
@@ -27,12 +25,42 @@ jobs:
       - name: Create test database
         run: |
           sqlite3 bank_test.db <<EOF
-          CREATE TABLE users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, full_name TEXT, created_at TEXT DEFAULT (DATETIME('now')));
-          CREATE TABLE accounts (account_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, account_type TEXT NOT NULL, balance REAL DEFAULT 0, currency TEXT DEFAULT 'EUR', created_at TEXT DEFAULT (DATETIME('now')), FOREIGN KEY (user_id) REFERENCES users(user_id));
-          CREATE TABLE trans (transaction_id INTEGER PRIMARY KEY AUTOINCREMENT, from_account_id INTEGER NOT NULL, to_account_id INTEGER NOT NULL, amount REAL NOT NULL, transaction_date TEXT DEFAULT (DATETIME('now')), status TEXT DEFAULT 'pending', description TEXT, FOREIGN KEY (from_account_id) REFERENCES accounts(account_id), FOREIGN KEY (to_account_id) REFERENCES accounts(account_id));
-          INSERT INTO users (username, email, password_hash, full_name) VALUES ('john_doe', 'john@example.com', 'hash123', 'John Doe'), ('jane_smith', 'jane@example.com', 'hash456', 'Jane Smith');
-          INSERT INTO accounts (user_id, account_type, balance, currency) VALUES (1, 'current', 1500.00, 'EUR'), (2, 'savings', 500.00, 'EUR');
-          INSERT INTO trans (from_account_id, to_account_id, amount, status, description) VALUES (1, 2, 100.00, 'completed', 'Payment for services');
+          CREATE TABLE users (
+              user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+              username TEXT NOT NULL UNIQUE,
+              email TEXT NOT NULL UNIQUE,
+              password_hash TEXT NOT NULL,
+              full_name TEXT,
+              created_at TEXT DEFAULT (DATETIME('now'))
+          );
+          CREATE TABLE accounts (
+              account_id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER NOT NULL,
+              account_type TEXT NOT NULL,
+              balance REAL DEFAULT 0,
+              currency TEXT DEFAULT 'EUR',
+              created_at TEXT DEFAULT (DATETIME('now')),
+              FOREIGN KEY (user_id) REFERENCES users(user_id)
+          );
+          CREATE TABLE trans (
+              transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
+              from_account_id INTEGER NOT NULL,
+              to_account_id INTEGER NOT NULL,
+              amount REAL NOT NULL,
+              transaction_date TEXT DEFAULT (DATETIME('now')),
+              status TEXT DEFAULT 'pending',
+              description TEXT,
+              FOREIGN KEY (from_account_id) REFERENCES accounts(account_id),
+              FOREIGN KEY (to_account_id) REFERENCES accounts(account_id)
+          );
+          INSERT INTO users (username, email, password_hash, full_name)
+          VALUES ('john_doe', 'john@example.com', 'hash123', 'John Doe'),
+                 ('jane_smith', 'jane@example.com', 'hash456', 'Jane Smith');
+          INSERT INTO accounts (user_id, account_type, balance, currency)
+          VALUES (1, 'current', 1500.00, 'EUR'),
+                 (2, 'savings', 500.00, 'EUR');
+          INSERT INTO trans (from_account_id, to_account_id, amount, status, description)
+          VALUES (1, 2, 100.00, 'completed', 'Payment for services');
           EOF
 
       - name: Run DB integration test
