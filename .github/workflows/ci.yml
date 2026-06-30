@@ -22,10 +22,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Create test database
+      - name: Create database and tables
         run: |
-          cat > create_db.sql <<EOF
-          CREATE TABLE users (
+          # Vytvorenie databázy a tabuliek
+          sqlite3 bank_test.db <<EOF
+          CREATE TABLE IF NOT EXISTS users (
               user_id INTEGER PRIMARY KEY AUTOINCREMENT,
               username TEXT NOT NULL UNIQUE,
               email TEXT NOT NULL UNIQUE,
@@ -33,7 +34,7 @@ jobs:
               full_name TEXT,
               created_at TEXT DEFAULT (DATETIME('now'))
           );
-          CREATE TABLE accounts (
+          CREATE TABLE IF NOT EXISTS accounts (
               account_id INTEGER PRIMARY KEY AUTOINCREMENT,
               user_id INTEGER NOT NULL,
               account_type TEXT NOT NULL,
@@ -42,7 +43,7 @@ jobs:
               created_at TEXT DEFAULT (DATETIME('now')),
               FOREIGN KEY (user_id) REFERENCES users(user_id)
           );
-          CREATE TABLE trans (
+          CREATE TABLE IF NOT EXISTS trans (
               transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
               from_account_id INTEGER NOT NULL,
               to_account_id INTEGER NOT NULL,
@@ -53,16 +54,16 @@ jobs:
               FOREIGN KEY (from_account_id) REFERENCES accounts(account_id),
               FOREIGN KEY (to_account_id) REFERENCES accounts(account_id)
           );
-          INSERT INTO users (username, email, password_hash, full_name)
-          VALUES ('john_doe', 'john@example.com', 'hash123', 'John Doe'),
-                 ('jane_smith', 'jane@example.com', 'hash456', 'Jane Smith');
-          INSERT INTO accounts (user_id, account_type, balance, currency)
-          VALUES (1, 'current', 1500.00, 'EUR'),
-                 (2, 'savings', 500.00, 'EUR');
-          INSERT INTO trans (from_account_id, to_account_id, amount, status, description)
-          VALUES (1, 2, 100.00, 'completed', 'Payment for services');
+          -- Vloženie testovacích dát
+          INSERT OR IGNORE INTO users (user_id, username, email, password_hash, full_name)
+          VALUES (1, 'john_doe', 'john@example.com', 'hash123', 'John Doe');
+          INSERT OR IGNORE INTO users (user_id, username, email, password_hash, full_name)
+          VALUES (2, 'jane_smith', 'jane@example.com', 'hash456', 'Jane Smith');
+          INSERT OR IGNORE INTO accounts (account_id, user_id, account_type, balance, currency)
+          VALUES (1, 1, 'current', 1500.00, 'EUR');
+          INSERT OR IGNORE INTO accounts (account_id, user_id, account_type, balance, currency)
+          VALUES (2, 2, 'savings', 500.00, 'EUR');
           EOF
-          sqlite3 bank_test.db < create_db.sql
 
       - name: Run DB integration test
         run: |

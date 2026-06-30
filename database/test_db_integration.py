@@ -1,24 +1,24 @@
 import sqlite3
+import os
 
-# ABSOLÚTNA CESTA K DATABÁZE 
-DB_PATH = r"C:\Users\Administrator\Desktop\QA-Tester\bank_test.db"
+DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'bank_test.db')
 
 def test_transaction_saved():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Vyčistíme tabuľku pred testom
+    # Vyčistenie pred testom
     cursor.execute("DELETE FROM trans WHERE amount = 99.99")
     conn.commit()
     
-    # Vložíme testovaciu transakciu
+    # Vloženie testovacej transakcie
     cursor.execute("""
         INSERT INTO trans (from_account_id, to_account_id, amount, status, description)
         VALUES (1, 2, 99.99, 'pending', 'Test z DB integracneho testu')
     """)
     conn.commit()
     
-    # Overíme, či sa transakcia uložila
+    # Overenie
     cursor.execute("SELECT COUNT(*) FROM trans WHERE amount = 99.99")
     count = cursor.fetchone()[0]
     conn.close()
