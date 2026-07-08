@@ -22,3 +22,6 @@ Thumbs.db
 # Databázy 
 *.db
 *.sqlite
+
+# Allure reporty
+allure-results/
