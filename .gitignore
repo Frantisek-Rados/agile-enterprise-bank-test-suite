@@ -25,3 +25,5 @@ Thumbs.db
 
 # Allure reporty
 allure-results/
+
+*.png
