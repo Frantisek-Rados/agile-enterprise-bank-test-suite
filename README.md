@@ -17,7 +17,7 @@ Komplexný testovací projekt pre bankovú aplikáciu (ParaBank). Simuluje prác
 
 ## Výsledky testov
 
-- **API testy:** 5 passed, 1 skipped (ParaBank API vracia 500 – nahlásené ako BUG)
+- **API testy:** 5 passed, 1 skipped
 - **UI testy:** Prechádzajú (Playwright + POM)
 - **Databázové testy:** Prechádzajú (SQLite)
 - **CI/CD:** GitHub Actions – automatické spúšťanie testov
@@ -35,20 +35,26 @@ pytest --alluredir=allure-results
 allure serve allure-results
 ```
 
-## Nájdené chyby (BUG reporty)
+## Jira bug reporty
 
-- **Registrácia:** API vracia 500 Internal Server Error
-- **Zostatok (overview):** API vracia 500 Internal Server Error
+Ukážky bug reportov v Jira Cloud:
 
-## Jira bug report
-
-Ukážka bug reportu v Jira Cloud:  
+### 1. Krátke heslo akceptované
 **System akceptuje kratke heslo (123) pri registracii**
 
 - **Kroky:** Registrácia s heslom "123"
 - **Skutočný výsledok:** Registrácia prebehla úspešne
 - **Očakávaný výsledok:** Chybová správa "Heslo musí mať aspoň 6 znakov"
 - **Screenshot:** [docs/bug-kratke-heslo-123.png](docs/bug-kratke-heslo-123.png)
+
+### 2. API Overview – 500 Internal Server Error (nepotvrdené)
+**API Overview vracia 500 Internal Server Error**
+
+- **Kroky:** Prihlásenie a kliknutie na "Accounts Overview"
+- **Skutočný výsledok:** API vrátilo 500 Internal Server Error (pri opakovanom testovaní sa nepotvrdilo)
+- **Očakávaný výsledok:** 200 OK a zobrazenie zostatku
+- **Stav:** Zatvorené – nepodarilo sa reprodukovať
+- **Screenshot:** [docs/jira-ticket-closed.png](docs/jira-ticket-closed.png)
 
 ## Použité technológie
 
