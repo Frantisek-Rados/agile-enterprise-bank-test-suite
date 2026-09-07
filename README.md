@@ -40,6 +40,16 @@ allure serve allure-results
 - **Registrácia:** API vracia 500 Internal Server Error
 - **Zostatok (overview):** API vracia 500 Internal Server Error
 
+## Jira bug report
+
+Ukážka bug reportu v Jira Cloud:  
+**System akceptuje kratke heslo (123) pri registracii**
+
+- **Kroky:** Registrácia s heslom "123"
+- **Skutočný výsledok:** Registrácia prebehla úspešne
+- **Očakávaný výsledok:** Chybová správa "Heslo musí mať aspoň 6 znakov"
+- **Screenshot:** [docs/bug-kratke-heslo-123.png](docs/bug-kratke-heslo-123.png)
+
 ## Použité technológie
 
 - Python 3.11+
